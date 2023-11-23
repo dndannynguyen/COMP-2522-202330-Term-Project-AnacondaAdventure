@@ -24,15 +24,15 @@ public class StartMenu extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Snake Game - Start Menu");
+        primaryStage.setTitle("Anaconda Adventure - Start Menu");
 
-        // Load the logo image
+
         Image logo = new Image(getClass().getResourceAsStream("/images/anaconda.jpg"));
         ImageView logoView = new ImageView(logo);
-        logoView.setFitWidth(300); // Set the width of the logo image
+        logoView.setFitWidth(300);
         logoView.setPreserveRatio(true);
 
-        // Load custom font
+
         Font customFont = loadCustomFont("/fonts/Retro Gaming.ttf", 36);
 
         Text title = new Text("Anaconda Adventure");
@@ -53,7 +53,7 @@ public class StartMenu extends Application {
             AnacondaAdventure.main(new String[0]);
         });
 
-        VBox layout = new VBox(20); // Increased spacing between elements
+        VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
         layout.getChildren().addAll(logoView, title, timeAttackButton, endlessButton);
         layout.setStyle("-fx-background-color: #d9ead3; -fx-padding: 50px;");
