@@ -47,7 +47,7 @@ public class AnacondaAdventure extends Application {
         snake = new Snake();
         snake.init();
 
-        food = new Food(new Point(0, 0));
+        food = new Food(new Point(0, 0), FoodType.NORMAL);
         obstacle = new Obstacle();
 
         Scene scene = primaryStage.getScene();
