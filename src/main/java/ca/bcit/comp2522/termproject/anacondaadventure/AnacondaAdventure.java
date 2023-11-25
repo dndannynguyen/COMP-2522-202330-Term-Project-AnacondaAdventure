@@ -10,9 +10,11 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class AnacondaAdventure extends Application {
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
+    private static final int WIDTH = 1200;
+    private static final int HEIGHT = 700;
     private static final int TILE_SIZE = 20;
+    private static final int TILE_COUNT_X = WIDTH / TILE_SIZE;
+    private static final int TILE_COUNT_Y = HEIGHT / TILE_SIZE;
 
     private static String gameMode;
     private GraphicsContext gc;
@@ -20,13 +22,21 @@ public class AnacondaAdventure extends Application {
     private Food food;
     private Obstacle obstacle;
 
+    public static int getWIDTH() {
+        return TILE_COUNT_X;
+    }
+
+    public static int getHEIGHT() {
+        return TILE_COUNT_Y;
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Anaconda Adventure");
+        primaryStage.setTitle("Anaconda  Adventure");
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         gc = canvas.getGraphicsContext2D();
 
@@ -54,8 +64,6 @@ public class AnacondaAdventure extends Application {
                 snake.changeDirection(Direction.RIGHT);
             }
         });
-
-
 
         new AnimationTimer() {
             long lastUpdate = 0;
