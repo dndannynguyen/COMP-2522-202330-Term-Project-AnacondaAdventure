@@ -26,12 +26,10 @@ public class StartMenu extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Anaconda Adventure - Start Menu");
 
-
         Image logo = new Image(getClass().getResourceAsStream("/images/anaconda.jpg"));
         ImageView logoView = new ImageView(logo);
         logoView.setFitWidth(300);
         logoView.setPreserveRatio(true);
-
 
         Font customFont = loadCustomFont("/fonts/Retro Gaming.ttf", 36);
 
@@ -40,18 +38,10 @@ public class StartMenu extends Application {
         title.setFill(Color.DARKGREEN);
 
         Button timeAttackButton = createStyledButton("Time Attack", customFont);
-        timeAttackButton.setOnAction(event -> {
-            primaryStage.close();
-            AnacondaAdventure.setGameMode("Time Attack");
-            AnacondaAdventure.main(new String[0]);
-        });
+        timeAttackButton.setOnAction(event -> startGame(primaryStage, "Time Attack"));
 
         Button endlessButton = createStyledButton("Endless", customFont);
-        endlessButton.setOnAction(event -> {
-            primaryStage.close();
-            AnacondaAdventure.setGameMode("Endless");
-            AnacondaAdventure.main(new String[0]);
-        });
+        endlessButton.setOnAction(event -> startGame(primaryStage, "Endless"));
 
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
@@ -76,4 +66,9 @@ public class StartMenu extends Application {
         return button;
     }
 
+    private void startGame(Stage primaryStage, String mode) {
+        AnacondaAdventure.setGameMode(mode);
+        AnacondaAdventure game = new AnacondaAdventure();
+        game.start(primaryStage);
+    }
 }

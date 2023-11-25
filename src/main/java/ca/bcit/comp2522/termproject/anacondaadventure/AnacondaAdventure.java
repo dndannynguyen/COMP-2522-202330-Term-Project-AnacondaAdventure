@@ -36,7 +36,7 @@ public class AnacondaAdventure extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Anaconda  Adventure");
+        primaryStage.setTitle("Anaconda Adventure");
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         gc = canvas.getGraphicsContext2D();
 
@@ -86,6 +86,7 @@ public class AnacondaAdventure extends Application {
         food.render(gc, TILE_SIZE);
         obstacle.render(gc);
     }
+
     public static void setGameMode(String mode) {
         gameMode = mode;
     }
