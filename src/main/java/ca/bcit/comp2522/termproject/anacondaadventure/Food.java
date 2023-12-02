@@ -56,4 +56,8 @@ public class Food {
 
         return new Food(new Point(x, y), type);
     }
+
+    public void init() {
+
+    }
 }
