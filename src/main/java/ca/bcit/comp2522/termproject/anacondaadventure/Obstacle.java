@@ -12,5 +12,9 @@ public class Obstacle {
     public void render(GraphicsContext gc) {
 
     }
+
+    public void init() {
+
+    }
 }
 
