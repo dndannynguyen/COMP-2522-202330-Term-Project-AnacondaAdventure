@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Snake {
-    private final int WIDTH = AnacondaAdventure.getWIDTH();
-    private final int HEIGHT = AnacondaAdventure.getHEIGHT();
+    private final int WIDTH = SnakeGame.getWIDTH();
+    private final int HEIGHT = SnakeGame.getHEIGHT();
+
 
     private static List<Point> body;
     private Direction direction;
@@ -86,10 +87,4 @@ public class Snake {
             gc.fillRect(segment.getX() * tileSize, segment.getY() * tileSize, tileSize, tileSize);
         }
     }
-
-
-
-
-
-
 }
