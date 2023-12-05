@@ -5,15 +5,19 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Snake {
-    private final int WIDTH = SnakeGame.getWIDTH();
-    private final int HEIGHT = SnakeGame.getHEIGHT();
-
+    private final int WIDTH = AnacondaAdventure.getWIDTH();
+    private final int HEIGHT = AnacondaAdventure.getHEIGHT();
 
     private static List<Point> body;
     private Direction direction;
     private static final Color SNAKE_COLOR = Color.GREEN;
+
+    private int size = 9;
+
+    private Point [] lastPoints = new Point[3];
 
     public Snake() {
         body = new ArrayList<>();
@@ -29,19 +33,16 @@ public class Snake {
         direction = Direction.RIGHT;
     }
 
-    public static int getBodySize() {
-        return body.size();
-    }
-
-
     public void init() {
 
     }
 
-    public void update() {
-        if (!checkCollisionWithBoundaries(WIDTH, HEIGHT) && !checkCollisionWithSelf()) {
+    public boolean update(Obstacle obstacle) {
+        if (!checkCollisionWithBoundaries(WIDTH, HEIGHT) && !checkCollisionWithSelf() && !checkCollisionWithObstacle(obstacle)) {
             move();
+            return true;
         }
+        return false;
     }
 
     private void move() {
@@ -49,6 +50,8 @@ public class Snake {
         Point head = body.get(0);
         Point newHead = new Point(head.getX() + direction.getX(), head.getY() + direction.getY());
         body.add(0, newHead);
+        for(int i = 0; i < 3; i++)
+            lastPoints[i] = body.get(body.size() - i -1);
         body.remove(body.size() - 1);
     }
 
@@ -63,6 +66,16 @@ public class Snake {
         return x >= 0 && y >= 0 && x <= width && y <= height;
     }
 
+    public boolean checkCollisionWithObstacle(Obstacle obstacle){
+        if(obstacle == null)
+            return false;
+        for(int i = 0; i < obstacle.getObstacles().size(); i++){
+            Point obs = obstacle.getObstacles().get(i);
+            if(getHead().getX() == obs.getX() && getHead().getY() == obs.getY())
+                return true;
+        }
+        return false;
+    }
     public boolean checkCollisionWithBoundaries(int width, int height) {
         Point head = body.get(0);
         int x = head.getX();
@@ -87,4 +100,67 @@ public class Snake {
             gc.fillRect(segment.getX() * tileSize, segment.getY() * tileSize, tileSize, tileSize);
         }
     }
+
+    public boolean incrementSize(FoodType type){
+        if(type == FoodType.NORMAL) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Sound.foodEaten();
+                }
+            }).start();
+            size++;
+            AnacondaAdventure.remainingTime += 2;
+            if(Objects.equals(AnacondaAdventure.getGameMode(), "Time Attack"))
+                AnacondaAdventure.time.setText("" + AnacondaAdventure.remainingTime);
+            body.add(lastPoints[2]);
+            return true;
+        }
+        else if(type == FoodType.POWER_UP){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Sound.gameBonus();
+                }
+            }).start();
+            size += 3;
+            AnacondaAdventure.remainingTime += 7;
+            if(Objects.equals(AnacondaAdventure.getGameMode(), "Time Attack"))
+                AnacondaAdventure.time.setText("" + AnacondaAdventure.remainingTime);
+            for(int i = 0; i < 3; i++)
+                body.add(lastPoints[i]);
+            return true;
+        }
+        else{
+            if(size > 3){
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Sound.nerf();
+                    }
+                }).start();
+                size -= 2;
+                AnacondaAdventure.remainingTime -= 5;
+                if(Objects.equals(AnacondaAdventure.getGameMode(), "Time Attack"))
+                    AnacondaAdventure.time.setText("" + AnacondaAdventure.remainingTime);
+                for (int i = 0; i < 2; i++)
+                    body.remove(body.size() - 1- i);
+                return true;
+            }
+            else return false;
+        }
+    }
+
+    public Point getHead(){
+        return body.get(0);
+    }
+
+    public int getSize(){
+        return size;
+    }
+
+    public List<Point> getBody(){
+        return body;
+    }
+
 }
