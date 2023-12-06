@@ -38,15 +38,14 @@ public class Snake {
     }
 
     public boolean update(Obstacle obstacle) {
-        if (!checkCollisionWithBoundaries(WIDTH, HEIGHT) && !checkCollisionWithSelf() && !checkCollisionWithObstacle(obstacle)) {
+        if (!checkCollisionWithBoundaries() && !checkCollisionWithSelf() && !checkCollisionWithObstacle(obstacle)) {
             move();
-            return true;
+            return true; // Movement successful
         }
-        return false;
+        return false; // Movement failed due to collision
     }
 
     private void move() {
-
         Point head = body.get(0);
         Point newHead = new Point(head.getX() + direction.getX(), head.getY() + direction.getY());
         body.add(0, newHead);
@@ -56,7 +55,6 @@ public class Snake {
     }
 
     public void changeDirection(Direction newDirection) {
-
         if (!direction.isOpposite(newDirection)) {
             this.direction = newDirection;
         }
@@ -66,30 +64,31 @@ public class Snake {
         return x >= 0 && y >= 0 && x <= width && y <= height;
     }
 
-    public boolean checkCollisionWithObstacle(Obstacle obstacle){
-        if(obstacle == null)
-            return false;
-        for(int i = 0; i < obstacle.getObstacles().size(); i++){
-            Point obs = obstacle.getObstacles().get(i);
-            if(getHead().getX() == obs.getX() && getHead().getY() == obs.getY())
-                return true;
-        }
-        return false;
-    }
-    public boolean checkCollisionWithBoundaries(int width, int height) {
+    private boolean checkCollisionWithBoundaries() {
         Point head = body.get(0);
         int x = head.getX();
         int y = head.getY();
-        return !isWithinBoundaries(x, y, width, height);
+        return x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT;
     }
 
-    public boolean checkCollisionWithSelf() {
+    private boolean checkCollisionWithSelf() {
         Point head = body.get(0);
         for (int i = 1; i < body.size(); i++) {
             Point segment = body.get(i);
             if (head.getX() == segment.getX() && head.getY() == segment.getY()) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    private boolean checkCollisionWithObstacle(Obstacle obstacle) {
+        if (obstacle == null)
+            return false;
+        for (int i = 0; i < obstacle.getObstacles().size(); i++) {
+            Point obs = obstacle.getObstacles().get(i);
+            if (getHead().getX() == obs.getX() && getHead().getY() == obs.getY())
+                return true;
         }
         return false;
     }
