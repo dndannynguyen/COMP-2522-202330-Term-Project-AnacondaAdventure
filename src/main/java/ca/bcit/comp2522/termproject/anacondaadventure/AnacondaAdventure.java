@@ -80,7 +80,7 @@ public class AnacondaAdventure extends Application {
     public void start(Stage primaryStage) {
         this.stage = primaryStage;
 
-        File file = new File("src/main/resources/images/anaconda.jpg");
+        File file = new File("src/main/resources/images/background.jpg");
         backgroundImage = new Image(file.toURI().toString());
 
         file = new File("src/main/resources/Fonts/Retro Gaming.ttf");
@@ -136,12 +136,13 @@ public class AnacondaAdventure extends Application {
 
             public void handle(long now) {
                 if (now - lastUpdate >= 100_000_000) {
-                    if(!snake.update(obstacle)) {
-                        stopGame();
+                    boolean successfulMove = snake.update(obstacle); // Update the snake
+                    if (!successfulMove) {
+                        stopGame(); // Stop the game if the snake's movement was unsuccessful
                     }
-                    checkForFoodEaten();
-                    draw();
-                    lastUpdate = now;
+                    checkForFoodEaten(); // Check for food eaten
+                    draw(); // Redraw the game
+                    lastUpdate = now; // Update last update time
                 }
             }
         };
