@@ -62,7 +62,9 @@ public class StartMenu extends Application {
         Button button = new Button(text);
         button.setMinSize(200, 50);
         button.setMaxSize(200, 50);
-        button.setStyle("-fx-font-family: 'Retro Gaming'; -fx-font-size: 18;");
+        button.setStyle("-fx-font-family: 'Retro Gaming'; -fx-font-size: 18; -fx-background-color: #E5E8E8; -fx-text-fill: black; -fx-border-color: black; -fx-border-width: 2px;");
+        button.setOnMouseEntered(e -> button.setStyle("-fx-font-family: 'Retro Gaming'; -fx-font-size: 18; -fx-background-color: #d9ead3; -fx-text-fill: black; -fx-border-color: black; -fx-border-width: 2px;"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-font-family: 'Retro Gaming'; -fx-font-size: 18; -fx-background-color: #E5E8E8; -fx-text-fill: black; -fx-border-color: black; -fx-border-width: 2px;"));
         return button;
     }
 
