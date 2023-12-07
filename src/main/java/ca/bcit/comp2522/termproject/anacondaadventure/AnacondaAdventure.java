@@ -124,7 +124,6 @@ public class AnacondaAdventure extends Application {
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         gc = canvas.getGraphicsContext2D();
 
-
         StackPane root = new StackPane();
         root.getChildren().add(canvas);
 
@@ -135,7 +134,7 @@ public class AnacondaAdventure extends Application {
             long lastUpdate = 0;
 
             public void handle(long now) {
-                if (now - lastUpdate >= 100_000_000) {
+                if (now - lastUpdate >= 66_666_666) {
                     boolean successfulMove = snake.update(obstacle); // Update the snake
                     if (!successfulMove) {
                         stopGame(); // Stop the game if the snake's movement was unsuccessful
@@ -162,6 +161,7 @@ public class AnacondaAdventure extends Application {
 
         return root;
     }
+
 
     public void startClassicGame(){
         food = Food.generateRandomFood(new Point(0,0), new Point(getWIDTH(), getHEIGHT()), obstacle, snake, getGameMode());
