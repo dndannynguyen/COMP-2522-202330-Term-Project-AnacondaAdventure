@@ -44,7 +44,7 @@ public class AnacondaAdventure extends Application {
 
     private static final int INITIAL_REMAINING_TIME = 15;
     private static final int OBSTACLE_SPAWN_TIME = 10;
-    private static final int NUM_FOODS = 5;
+    private static final int NUM_FOODS = 3;
     AnimationTimer gameTimer;
 
     private boolean paused = false;
