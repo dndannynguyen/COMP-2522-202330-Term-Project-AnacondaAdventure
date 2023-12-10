@@ -209,22 +209,23 @@ public class AnacondaAdventure extends Application {
 
         scene.setOnKeyPressed(event -> {
             KeyCode keyCode = event.getCode();
-            if (keyCode == KeyCode.UP || keyCode == KeyCode.W) {
-                snake.changeDirection(Direction.UP);
-            } else if (keyCode == KeyCode.DOWN || keyCode == KeyCode.S) {
-                snake.changeDirection(Direction.DOWN);
-            } else if (keyCode == KeyCode.LEFT || keyCode == KeyCode.A) {
-                snake.changeDirection(Direction.LEFT);
-            } else if (keyCode == KeyCode.RIGHT || keyCode == KeyCode.D) {
-                snake.changeDirection(Direction.RIGHT);
-            }
-            else if(keyCode == KeyCode.ESCAPE){
-                if(paused)
-                    gameTimer.start();
-                else
-                    gameTimer.stop();
-                paused = !paused;
-
+            switch (keyCode) {
+                case UP:
+                case W:
+                    snake.changeDirection(Direction.UP);
+                    break;
+                case DOWN:
+                case S:
+                    snake.changeDirection(Direction.DOWN);
+                    break;
+                case LEFT:
+                case A:
+                    snake.changeDirection(Direction.LEFT);
+                    break;
+                case RIGHT:
+                case D:
+                    snake.changeDirection(Direction.RIGHT);
+                    break;
             }
         });
 
