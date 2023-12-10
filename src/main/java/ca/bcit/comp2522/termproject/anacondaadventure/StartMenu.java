@@ -17,6 +17,12 @@ import java.io.InputStream;
 public class StartMenu extends Application {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
+    private static final int BUTTON_WIDTH = 200;
+    private static final int BUTTON_HEIGHT = 50;
+    private static final int FONT_SIZE = 18;
+    private static final String FONT_FAMILY = "Retro Gaming";
+    private static final String BUTTON_STYLE = "-fx-font-family: '" + FONT_FAMILY + "'; -fx-font-size: " + FONT_SIZE + "; -fx-background-color: #E5E8E8; -fx-text-fill: black; -fx-border-color: black; -fx-border-width: 2px;";
+    private static final String BUTTON_HOVER_STYLE = "-fx-font-family: '" + FONT_FAMILY + "'; -fx-font-size: " + FONT_SIZE + "; -fx-background-color: #d9ead3; -fx-text-fill: black; -fx-border-color: black; -fx-border-width: 2px;";
 
     public static void main(String[] args) {
         launch(args);
@@ -37,15 +43,19 @@ public class StartMenu extends Application {
         title.setFont(customFont);
         title.setFill(Color.DARKGREEN);
 
-        Button timeAttackButton = createStyledButton("Time Attack", customFont);
-        timeAttackButton.setOnAction(event -> startGame(primaryStage, "Time Attack"));
-
-        Button endlessButton = createStyledButton("Endless", customFont);
-        endlessButton.setOnAction(event -> startGame(primaryStage, "Endless"));
+        String[][] buttons = {{"Time Attack", "Time Attack"}, {"Endless", "Endless"}};
 
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
-        layout.getChildren().addAll(logoView, title, timeAttackButton, endlessButton);
+        layout.getChildren().add(logoView);
+        layout.getChildren().add(title);
+
+        for (String[] button : buttons) {
+            Button b = createStyledButton(button[0], customFont);
+            b.setOnAction(event -> startGame(primaryStage, button[1]));
+            layout.getChildren().add(b);
+        }
+
         layout.setStyle("-fx-background-color: #d9ead3; -fx-padding: 50px;");
 
         Scene scene = new Scene(layout, WIDTH, HEIGHT);
@@ -60,16 +70,25 @@ public class StartMenu extends Application {
 
     private Button createStyledButton(String text, Font font) {
         Button button = new Button(text);
-        button.setMinSize(200, 50);
-        button.setMaxSize(200, 50);
-        button.setStyle("-fx-font-family: 'Retro Gaming'; -fx-font-size: 18; -fx-background-color: #E5E8E8; -fx-text-fill: black; -fx-border-color: black; -fx-border-width: 2px;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-font-family: 'Retro Gaming'; -fx-font-size: 18; -fx-background-color: #d9ead3; -fx-text-fill: black; -fx-border-color: black; -fx-border-width: 2px;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-font-family: 'Retro Gaming'; -fx-font-size: 18; -fx-background-color: #E5E8E8; -fx-text-fill: black; -fx-border-color: black; -fx-border-width: 2px;"));
+        button.setMinSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+        button.setMaxSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+        button.setStyle(BUTTON_STYLE);
+        button.setOnMouseEntered(e -> button.setStyle(BUTTON_HOVER_STYLE));
+        button.setOnMouseExited(e -> button.setStyle(BUTTON_STYLE));
         return button;
     }
 
     private void startGame(Stage primaryStage, String mode) {
-        AnacondaAdventure.setGameMode(mode);
+        switch (mode) {
+            case "Time Attack":
+                AnacondaAdventure.setGameMode("Time Attack");
+                break;
+            case "Endless":
+                AnacondaAdventure.setGameMode("Endless");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid game mode: " + mode);
+        }
         AnacondaAdventure game = new AnacondaAdventure();
         game.start(primaryStage);
     }
