@@ -14,6 +14,10 @@ import javafx.stage.Stage;
 
 import java.io.InputStream;
 
+/**
+ * Represents the start menu of the Anaconda Adventure game.
+ * Allows the player to choose between different game modes.
+ */
 public class StartMenu extends Application {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
@@ -28,9 +32,14 @@ public class StartMenu extends Application {
         launch(args);
     }
 
+    /**
+     * Initializes the start menu layout and handles user interactions.
+     *
+     * @param primaryStage The primary stage of the application.
+     */
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Anaconda Adventure - Start Menu");
+        primaryStage.setTitle("Anaconda Adventure");
 
         Image logo = new Image(getClass().getResourceAsStream("/images/anaconda.jpg"));
         ImageView logoView = new ImageView(logo);
@@ -63,11 +72,25 @@ public class StartMenu extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Loads a custom font file for use in the start menu.
+     *
+     * @param path The path to the font file.
+     * @param size The size of the font.
+     * @return The loaded custom font.
+     */
     private Font loadCustomFont(String path, double size) {
         InputStream fontStream = getClass().getResourceAsStream(path);
         return Font.loadFont(fontStream, size);
     }
 
+    /**
+     * Creates a styled button with specified text and font.
+     *
+     * @param text The text displayed on the button.
+     * @param font The font used for the button text.
+     * @return The styled button.
+     */
     private Button createStyledButton(String text, Font font) {
         Button button = new Button(text);
         button.setMinSize(BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -78,6 +101,12 @@ public class StartMenu extends Application {
         return button;
     }
 
+    /**
+     * Starts the game with the selected game mode.
+     *
+     * @param primaryStage The primary stage of the application.
+     * @param mode         The selected game mode.
+     */
     private void startGame(Stage primaryStage, String mode) {
         switch (mode) {
             case "Time Attack":

@@ -1,5 +1,8 @@
 package ca.bcit.comp2522.termproject.anacondaadventure;
 
+/**
+ * Represents a point in a two-dimensional space with x and y coordinates.
+ */
 public class Point {
     private int x;
     private int y;

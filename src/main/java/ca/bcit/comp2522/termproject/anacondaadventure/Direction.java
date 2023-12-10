@@ -1,5 +1,9 @@
 package ca.bcit.comp2522.termproject.anacondaadventure;
 
+/**
+ * Enum representing directions: UP, DOWN, LEFT, RIGHT.
+ * Each direction has associated X and Y values indicating movement in a 2D plane.
+ */
 public enum Direction {
     UP(0, -1),
     DOWN(0, 1),

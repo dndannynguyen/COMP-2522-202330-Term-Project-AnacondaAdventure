@@ -2,7 +2,6 @@ package ca.bcit.comp2522.termproject.anacondaadventure;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -20,15 +19,16 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 
+/**
+ * The main class controlling the Anaconda Adventure game.
+ * Manages the game modes, graphics, and gameplay logic.
+ */
 public class AnacondaAdventure extends Application {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
@@ -64,18 +64,38 @@ public class AnacondaAdventure extends Application {
     public static int remainingTime = 60;
     public static Label time;
 
+    /**
+     * Retrieves the width of the game grid.
+     *
+     * @return The width of the game grid.
+     */
     public static int getWIDTH() {
         return TILE_COUNT_X;
     }
 
+    /**
+     * Retrieves the height of the game grid.
+     *
+     * @return The height of the game grid.
+     */
     public static int getHEIGHT() {
         return TILE_COUNT_Y;
     }
 
+    /**
+     * The entry point of the application.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+    /**
+     * Initializes and starts the game upon application launch.
+     *
+     * @param primaryStage The primary stage of the application.
+     */
     @Override
     public void start(Stage primaryStage) {
         this.stage = primaryStage;
@@ -99,7 +119,9 @@ public class AnacondaAdventure extends Application {
         primaryStage.show();
     }
 
-
+    /**
+     * Draws the game elements on the canvas.
+     */
     private void draw() {
         gc.clearRect(0, 0, WIDTH, HEIGHT);
         gc.drawImage(backgroundImage,0,0, WIDTH, HEIGHT);
@@ -120,6 +142,12 @@ public class AnacondaAdventure extends Application {
         return gameMode;
     }
 
+    /**
+     * Creates and initializes the basic game layout.
+     * Sets up the canvas, initializes game elements, starts the game loop, and centers the stage on the screen.
+     *
+     * @return The StackPane containing the game canvas and elements.
+     */
     public StackPane createBasicGame(){
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         gc = canvas.getGraphicsContext2D();
@@ -162,7 +190,10 @@ public class AnacondaAdventure extends Application {
         return root;
     }
 
-
+    /**
+     * Starts the Classic game mode by initializing the initial food, setting up the scene,
+     * and defining key event handlers for controlling the snake's movement.
+     */
     public void startClassicGame(){
         food = Food.generateRandomFood(new Point(0,0), new Point(getWIDTH(), getHEIGHT()), obstacle, snake, getGameMode());
         stage.setScene(new Scene(createBasicGame()));
@@ -192,51 +223,69 @@ public class AnacondaAdventure extends Application {
 
     }
 
-    public void createTimeGame(){
-        remainingTime = 20;
+    /**
+     * Creates the Time Attack game mode by initializing the game with a time limit,
+     * setting up the scene, handling time-related functionalities such as obstacle spawning,
+     * and defining key event handlers for controlling the snake's movement and game pausing.
+     */
+    public void createTimeGame() {
+        remainingTime = 20; // Change this back to your desired initial time
         StackPane root = createBasicGame();
 
         time = new Label("" + remainingTime);
         time.setFont(new Font(25));
 
         obstacle = new Obstacle();
-        Timer timer2 = new Timer();
-        for(int i = 0; i < 3; i++)
-            foods[i] = Food.generateRandomFood(new Point(0,0), new Point(getWIDTH(), getHEIGHT()), obstacle, snake, getGameMode());
-        timer2.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                Sound.difficultyIncrease();
-                Platform.runLater(()->{
-                    timeInfoBox.getChildren().add(new Label("Adding Obstacles!"));
-                });
-                for(int i = 0; i < 3; i++)
-                    obstacle.spawn(new Point(0,0), new Point(getWIDTH(), getHEIGHT()));
-            }
-        }, 10000, 15000);
+        for (int i = 0; i < 3; i++)
+            foods[i] = Food.generateRandomFood(new Point(0, 0), new Point(getWIDTH(), getHEIGHT()), obstacle, snake, getGameMode());
 
-        Timer timer1 = new Timer(true);
-        timer1.scheduleAtFixedRate(new TimerTask() {
+        AnimationTimer gameTimer = new AnimationTimer() {
+            private long lastUpdate = 0;
+            private double obstacleTime = 0;
+            private double elapsedTime = 0;
+
             @Override
-            public void run() {
-                remainingTime--;
-                Platform.runLater(()->{
-                    if(remainingTime <= 0) {
-                        timer1.cancel();
-                        timer2.cancel();
-                        stopGame();
+            public void handle(long now) {
+                if (lastUpdate > 0) {
+                    long elapsedNanos = now - lastUpdate;
+                    double elapsedSeconds = elapsedNanos / 1_000_000_000.0;
+
+                    elapsedTime += elapsedSeconds;
+                    obstacleTime += elapsedSeconds;
+
+                    if (elapsedTime >= 1) {
+                        remainingTime--;
+                        elapsedTime = 0;
                     }
+
+                    if (remainingTime <= 0) {
+                        this.stop();
+                        stopGame(); // Stop the game when time runs out
+                    }
+
+                    if (obstacleTime >= 10) {
+                        Sound.difficultyIncrease();
+                        timeInfoBox.getChildren().add(new Label("Adding Obstacles!"));
+                        for (int i = 0; i < 3; i++)
+                            obstacle.spawn(new Point(0, 0), new Point(getWIDTH(), getHEIGHT()));
+                        obstacleTime = 0;
+                    }
+
                     time.setText("" + remainingTime);
-                });
+                }
+                lastUpdate = now;
             }
-        }, 1000, 1000);
+        };
+
+        gameTimer.start();
 
         timeInfoBox = new VBox(time);
         timeGameBox = new HBox(timeInfoBox, root);
         stage.setScene(new Scene(timeGameBox));
 
-
         Scene scene = stage.getScene();
+
+        final boolean[] isRunning = {true};
 
         scene.setOnKeyPressed(event -> {
             KeyCode keyCode = event.getCode();
@@ -250,16 +299,21 @@ public class AnacondaAdventure extends Application {
                 snake.changeDirection(Direction.RIGHT);
             }
             else if(keyCode == KeyCode.ESCAPE){
-                if(paused)
-                    gameTimer.start();
-                else
+                if (isRunning[0])
                     gameTimer.stop();
-                paused = !paused;
-
+                else
+                    gameTimer.start();
+                isRunning[0] = !isRunning[0];
             }
         });
     }
 
+
+    /**
+     * Checks if the snake has eaten any food, updates the snake's size accordingly,
+     * and generates new food items based on the game mode (Time Attack or Classic).
+     * Stops the game if the snake encounters an obstacle or reaches its maximum size.
+     */
     public void checkForFoodEaten(){
         if(Objects.equals(getGameMode(), "Time Attack")){
             for(int i = 0; i < 3; i++ ){
@@ -279,6 +333,11 @@ public class AnacondaAdventure extends Application {
         }
     }
 
+    /**
+     * Creates a pane for the game-over screen, displaying the final score and providing options to play again or exit to the menu.
+     *
+     * @return A Pane object representing the game-over screen layout.
+     */
     public Pane gameOverPane(){
         Pane pane = new Pane();
         pane.setPrefSize(400, 400);
@@ -325,6 +384,10 @@ public class AnacondaAdventure extends Application {
         return pane;
     }
 
+    /**
+     * Stops the game by triggering a game-over scenario.
+     * Stops the game timer, plays a game-over sound, and transitions the scene to the game-over screen.
+     */
     public void stopGame(){
         Sound.gameOver();
         gameTimer.stop();

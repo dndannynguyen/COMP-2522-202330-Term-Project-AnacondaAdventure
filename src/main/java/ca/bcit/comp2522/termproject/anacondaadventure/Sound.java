@@ -5,6 +5,9 @@ import javafx.scene.media.MediaPlayer;
 
 import java.io.File;
 
+/**
+ * Handles the sound effects in the game.
+ */
 public class Sound {
     public static MediaPlayer foodEatPlayer;
     public static MediaPlayer gameOverPlayer;
