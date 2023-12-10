@@ -314,75 +314,75 @@ public class AnacondaAdventure extends Application {
      * and generates new food items based on the game mode (Time Attack or Classic).
      * Stops the game if the snake encounters an obstacle or reaches its maximum size.
      */
-    public void checkForFoodEaten(){
-        if(Objects.equals(getGameMode(), "Time Attack")){
-            for(int i = 0; i < 3; i++ ){
-                if(snake.getHead().getX() == foods[i].getPoint().getX() && snake.getHead().getY() == foods[i].getPoint().getY()){
-                    if(!snake.incrementSize(foods[i].getType()))
+    public void checkForFoodEaten() {
+        if (Objects.equals(getGameMode(), "Time Attack")) {
+            for (int i = 0; i < 3; i++) {
+                if (snake.getHead().getX() == foods[i].getPoint().getX() && snake.getHead().getY() == foods[i].getPoint().getY()) {
+                    if (!snake.incrementSize(foods[i].getType())) {
                         stopGame();
+                    }
                     foods[i] = Food.generateRandomFood(new Point(0, 0), new Point(getWIDTH(), getHEIGHT()), obstacle, snake, getGameMode());
                 }
             }
-        }
-        else{
-            if(snake.getHead().getX() == food.getPoint().getX() && snake.getHead().getY() == food.getPoint().getY()) {
-                if(!snake.incrementSize(food.getType()))
+        } else {
+            if (snake.getHead().getX() == food.getPoint().getX() && snake.getHead().getY() == food.getPoint().getY()) {
+                if (!snake.incrementSize(food.getType())) {
                     stopGame();
+                }
                 food = Food.generateRandomFood(new Point(0, 0), new Point(getWIDTH(), getHEIGHT()), obstacle, snake, getGameMode());
             }
         }
     }
+
 
     /**
      * Creates a pane for the game-over screen, displaying the final score and providing options to play again or exit to the menu.
      *
      * @return A Pane object representing the game-over screen layout.
      */
-    public Pane gameOverPane(){
+    public Pane gameOverPane() {
         Pane pane = new Pane();
         pane.setPrefSize(400, 400);
         pane.setBackground(new Background(new BackgroundFill(Color.GRAY, null, null)));
 
-        Label score = new Label("SCORE: " + (snake.getSize()-9)*10);
-        score.setAlignment(Pos.CENTER);
-        score.setFont(gameFont);
-        score.setPrefSize(300, 50);
-        score.setLayoutX(50);
-        score.setLayoutY(75);
-        pane.getChildren().add(score);
+        Label scoreLabel = new Label("SCORE: " + (snake.getSize()-9)*10);
+        scoreLabel.setAlignment(Pos.CENTER);
+        scoreLabel.setFont(gameFont);
+        scoreLabel.setPrefSize(300, 50);
+        scoreLabel.setLayoutX(50);
+        scoreLabel.setLayoutY(75);
 
-        Button [] options = new Button[2];
-        String [] opt = new String[]{
-                "Play Again",
-                "Exit to Menu"
-        };
+        String[] buttonLabels = {"Play Again", "Exit to Menu"};
+        Button[] buttons = new Button[buttonLabels.length];
 
-        for(int i = 0, y = 175; i < 2; i++, y += 100){
-            options[i] = new Button(opt[i]);
-            options[i].setFont(gameFont);
-            options[i].setPrefSize(350, 50);
-            options[i].setLayoutX(25);
-            options[i].setLayoutY(y);
-            options[i].setCursor(Cursor.HAND);
-            pane.getChildren().add(options[i]);
+        VBox buttonBox = new VBox();
+        buttonBox.setSpacing(50);
+        buttonBox.setLayoutX(25);
+        buttonBox.setLayoutY(175);
+
+        for (int i = 0; i < buttonLabels.length; i++) {
+            buttons[i] = new Button(buttonLabels[i]);
+            buttons[i].setFont(gameFont);
+            buttons[i].setPrefSize(350, 50);
+            buttons[i].setCursor(Cursor.HAND);
+            buttonBox.getChildren().add(buttons[i]);
         }
-        options[0].setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if(Objects.equals("Time Attack", getGameMode()))
-                    createTimeGame();
-                else startClassicGame();
+
+        buttons[0].setOnMouseClicked(event -> {
+            if ("Time Attack".equals(getGameMode())) {
+                createTimeGame();
+            } else {
+                startClassicGame();
             }
         });
-        options[1].setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                new StartMenu().start(stage);
-            }
-        });
+
+        buttons[1].setOnMouseClicked(event -> new StartMenu().start(stage));
+
+        pane.getChildren().addAll(scoreLabel, buttonBox);
 
         return pane;
     }
+
 
     /**
      * Stops the game by triggering a game-over scenario.
