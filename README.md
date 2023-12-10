@@ -1,13 +1,5 @@
 # Anaconda Adventure
 
-Anaconda Adventure is a Snake game implemented in JavaFX, featuring multiple game modes, unique challenges, and exciting gameplay mechanics.
-## Table of Contents
-- [Features](#features)
-- [Installation](#installation)
-- [How to Play](#how-to-play)
-- [Game Modes](#game-modes)
-- [Controls](#controls)
-- 
 ## Overview
 
 Anaconda Adventure is a project designed to create a versatile Snake game with various game modes and challenges. It offers a classic Snake gaming experience along with special modes like Time Attack and Timeless.
