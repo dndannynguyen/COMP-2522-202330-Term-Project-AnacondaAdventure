@@ -1,7 +1,9 @@
 package ca.bcit.comp2522.termproject.anacondaadventure;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.paint.Color;
+import javafx.scene.control.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,6 +168,10 @@ public class Snake {
      * @return {@code true} if the size is successfully updated, {@code false} otherwise.
      */
     public boolean incrementSize(FoodType type){
+        if(AnacondaAdventure.progressBar == null) {
+            AnacondaAdventure.progressBar = new ProgressBar(1);
+            AnacondaAdventure.progressBar.setPrefWidth(200);
+        }
         if(type == FoodType.NORMAL) {
             new Thread(new Runnable() {
                 @Override
@@ -176,7 +182,7 @@ public class Snake {
             size++;
             AnacondaAdventure.remainingTime += 2;
             if(Objects.equals(AnacondaAdventure.getGameMode(), "Time Attack"))
-                AnacondaAdventure.time.setText("" + AnacondaAdventure.remainingTime);
+                AnacondaAdventure.progressBar.setProgress((int) ((double) AnacondaAdventure.remainingTime / 20));
             body.add(lastPoints[2]);
             return true;
         }
@@ -190,7 +196,7 @@ public class Snake {
             size += 3;
             AnacondaAdventure.remainingTime += 7;
             if(Objects.equals(AnacondaAdventure.getGameMode(), "Time Attack"))
-                AnacondaAdventure.time.setText("" + AnacondaAdventure.remainingTime);
+                AnacondaAdventure.progressBar.setProgress((int) ((double) AnacondaAdventure.remainingTime / 20));
             for(int i = 0; i < 3; i++)
                 body.add(lastPoints[i]);
             return true;
@@ -206,7 +212,7 @@ public class Snake {
                 size -= 2;
                 AnacondaAdventure.remainingTime -= 5;
                 if(Objects.equals(AnacondaAdventure.getGameMode(), "Time Attack"))
-                    AnacondaAdventure.time.setText("" + AnacondaAdventure.remainingTime);
+                    AnacondaAdventure.progressBar.setProgress((int) ((double) AnacondaAdventure.remainingTime / 20));
                 for (int i = 0; i < 2; i++)
                     body.remove(body.size() - 1- i);
                 return true;
@@ -214,6 +220,7 @@ public class Snake {
             else return false;
         }
     }
+
 
     /**
      * Retrieves the head (front) of the snake.

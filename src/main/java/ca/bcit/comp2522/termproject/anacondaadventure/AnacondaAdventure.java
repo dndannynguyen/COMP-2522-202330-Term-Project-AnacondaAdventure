@@ -11,6 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
@@ -20,6 +21,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -35,9 +37,14 @@ public class AnacondaAdventure extends Application {
     private static final int TILE_SIZE = 20;
 
     // subtracted 1 because points start from 0
+
     private static final int TILE_COUNT_X = (WIDTH / TILE_SIZE) - 1;
     private static final int TILE_COUNT_Y = (HEIGHT / TILE_SIZE) - 1;
+    public static ProgressBar progressBar;
 
+    private static final int INITIAL_REMAINING_TIME = 15;
+    private static final int OBSTACLE_SPAWN_TIME = 10;
+    private static final int NUM_FOODS = 5;
     AnimationTimer gameTimer;
 
     private boolean paused = false;
@@ -229,14 +236,22 @@ public class AnacondaAdventure extends Application {
      * and defining key event handlers for controlling the snake's movement and game pausing.
      */
     public void createTimeGame() {
-        remainingTime = 20; // Change this back to your desired initial time
+        remainingTime = INITIAL_REMAINING_TIME;
         StackPane root = createBasicGame();
 
-        time = new Label("" + remainingTime);
-        time.setFont(new Font(25));
+        Label timeLabel = new Label("Time Remaining: " + remainingTime);
+        timeLabel.setFont(new Font(25));
+
+        ProgressBar timerProgressBar = new ProgressBar();
+        timerProgressBar.setProgress(1.0);
+        timerProgressBar.setPrefWidth(200);
+
+        VBox timeInfoBox = new VBox(10);
+        timeInfoBox.setAlignment(Pos.CENTER);
+        timeInfoBox.getChildren().addAll(timeLabel, timerProgressBar);
 
         obstacle = new Obstacle();
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < NUM_FOODS; i++)
             foods[i] = Food.generateRandomFood(new Point(0, 0), new Point(getWIDTH(), getHEIGHT()), obstacle, snake, getGameMode());
 
         AnimationTimer gameTimer = new AnimationTimer() {
@@ -256,22 +271,22 @@ public class AnacondaAdventure extends Application {
                     if (elapsedTime >= 1) {
                         remainingTime--;
                         elapsedTime = 0;
+                        timerProgressBar.setProgress((double) remainingTime / INITIAL_REMAINING_TIME);
                     }
 
                     if (remainingTime <= 0) {
                         this.stop();
-                        stopGame(); // Stop the game when time runs out
+                        stopGame();
                     }
 
-                    if (obstacleTime >= 10) {
+                    if (obstacleTime >= OBSTACLE_SPAWN_TIME) {
                         Sound.difficultyIncrease();
                         timeInfoBox.getChildren().add(new Label("Adding Obstacles!"));
-                        for (int i = 0; i < 3; i++)
-                            obstacle.spawn(new Point(0, 0), new Point(getWIDTH(), getHEIGHT()));
+                        spawnObstacles();
                         obstacleTime = 0;
                     }
 
-                    time.setText("" + remainingTime);
+                    timeLabel.setText("Time Remaining: " + remainingTime);
                 }
                 lastUpdate = now;
             }
@@ -279,34 +294,49 @@ public class AnacondaAdventure extends Application {
 
         gameTimer.start();
 
-        timeInfoBox = new VBox(time);
-        timeGameBox = new HBox(timeInfoBox, root);
-        stage.setScene(new Scene(timeGameBox));
+        HBox timeGameBox = new HBox(10);
+        timeGameBox.setAlignment(Pos.CENTER);
+        timeGameBox.getChildren().addAll(timeInfoBox, root);
 
-        Scene scene = stage.getScene();
-
-        final boolean[] isRunning = {true};
-
+        Scene scene = new Scene(timeGameBox);
         scene.setOnKeyPressed(event -> {
             KeyCode keyCode = event.getCode();
-            if (keyCode == KeyCode.UP || keyCode == KeyCode.W) {
-                snake.changeDirection(Direction.UP);
-            } else if (keyCode == KeyCode.DOWN || keyCode == KeyCode.S) {
-                snake.changeDirection(Direction.DOWN);
-            } else if (keyCode == KeyCode.LEFT || keyCode == KeyCode.A) {
-                snake.changeDirection(Direction.LEFT);
-            } else if (keyCode == KeyCode.RIGHT || keyCode == KeyCode.D) {
-                snake.changeDirection(Direction.RIGHT);
-            }
-            else if(keyCode == KeyCode.ESCAPE){
-                if (isRunning[0])
-                    gameTimer.stop();
-                else
-                    gameTimer.start();
-                isRunning[0] = !isRunning[0];
+            switch (keyCode) {
+                case UP:
+                case W:
+                    snake.changeDirection(Direction.UP);
+                    break;
+                case DOWN:
+                case S:
+                    snake.changeDirection(Direction.DOWN);
+                    break;
+                case LEFT:
+                case A:
+                    snake.changeDirection(Direction.LEFT);
+                    break;
+                case RIGHT:
+                case D:
+                    snake.changeDirection(Direction.RIGHT);
+                    break;
             }
         });
+
+        stage.setScene(scene);
     }
+    /**
+     * Spawns a set number of obstacles within the game area.
+     * The number of obstacles is determined by the constant NUM_FOODS.
+     * Each obstacle is spawned at a random location within the game area,
+     * which is defined by the width and height of the game.
+     */
+    private void spawnObstacles() {
+        for (int i = 0; i < NUM_FOODS; i++)
+            obstacle.spawn(new Point(0, 0), new Point(getWIDTH(), getHEIGHT()));
+    }
+
+
+
+
 
 
     /**
